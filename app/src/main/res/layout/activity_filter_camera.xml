@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextureView
+        android:id="@+id/cameraSurface"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/btn_record"
+        app:backgroundTint="@color/white"
+        android:layout_width="125dp"
+        android:layout_height="60dp"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"/>
+
+    <ImageButton
+        android:id="@+id/btn_close"
+        android:background="@null"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin = "20dp"/>
+
+    <ImageButton
+        android:id="@+id/btn_swap_camera"
+        android:layout_width="wrap_content"
+        android:background="@null"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btn_record"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="20dp" />
+
+    <SeekBar
+        android:id="@+id/seek_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_above="@id/btn_record"
+        android:progress="50"
+        android:max="100"
+        android:padding="10dp"/>
+
+
+</RelativeLayout>
