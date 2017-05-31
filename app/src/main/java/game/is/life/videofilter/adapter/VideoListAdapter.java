@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import game.is.life.videofilter.FileIO;
 import game.is.life.videofilter.R;
@@ -25,7 +26,7 @@ import game.is.life.videofilter.R;
  * Created by yzhao on 5/29/17.
  */
 
-public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> {
+public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.VideoViewHolder> implements ItemTouchHelperAdapter{
 
     private ArrayList<VideoListItem> mDataset;
     private Context context;
@@ -113,5 +114,32 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     @Override
     public int getItemCount() {
         return mDataset.size();
+    }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+        if (fromPosition < toPosition) {
+            for (int i = fromPosition; i < toPosition; i++) {
+                Collections.swap(mDataset, i, i + 1);
+            }
+        } else {
+            for (int i = fromPosition; i > toPosition; i--) {
+                Collections.swap(mDataset, i, i - 1);
+            }
+        }
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        VideoListItem item = mDataset.get(position);
+        File sdCard = Environment.getExternalStorageDirectory();
+        File file = new File(sdCard, File.separator + FileIO.getAppFolderName()
+                + File.separator + item.getTitle());
+
+        if (file.delete()){
+            mDataset.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 }

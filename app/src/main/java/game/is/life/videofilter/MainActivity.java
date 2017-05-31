@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.TextureView;
 import android.view.View;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import game.is.life.videofilter.adapter.VideoItemTouchHelperCallback;
 import game.is.life.videofilter.adapter.VideoListAdapter;
 import game.is.life.videofilter.adapter.VideoListItem;
 
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<VideoListItem> videos;
     private RecyclerView videoList;
     private TextView placeHolder;
+    private VideoItemTouchHelperCallback videoItemTouchHelperCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +65,14 @@ public class MainActivity extends AppCompatActivity {
         videoList.setHasFixedSize(true);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         videoList.setLayoutManager(llm);
-        videoList.setAdapter(new VideoListAdapter(videos,getApplicationContext()));
+        VideoListAdapter adapter= new VideoListAdapter(videos,getApplicationContext());
+        videoList.setAdapter(adapter);
+
+        // attach swipe listener
+        ItemTouchHelper.Callback callback =
+                new VideoItemTouchHelperCallback(adapter);
+        ItemTouchHelper touchHelper = new ItemTouchHelper(callback);
+        touchHelper.attachToRecyclerView(videoList);
     }
 
     private int loadFiles(){

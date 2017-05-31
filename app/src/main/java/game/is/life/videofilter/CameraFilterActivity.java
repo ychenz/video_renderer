@@ -1,17 +1,20 @@
 package game.is.life.videofilter;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.TextureView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -38,10 +41,9 @@ public class CameraFilterActivity extends AppCompatActivity implements CameraRen
     private boolean mPermissionsSatisfied = false;
     private static final String TAG = CameraFilterActivity.class.getSimpleName();
     private FileIO fileIO;
+    private String storeFileName = "";
 
     private static final String TAG_CAMERA_FRAGMENT = "tag_camera_frag";
-    private static final String TEST_VIDEO_FILE_NAME = "render_video.mp4";
-    private static Integer videoCount = 0;
 
     /**
      * boolean for triggering restart of camera after completed rendering
@@ -247,15 +249,41 @@ public class CameraFilterActivity extends AppCompatActivity implements CameraRen
         mRenderer = null;
     }
 
-    private File getVideoFile()
-    {
-        return fileIO.getFile();
-    }
-
     private void startRecording()
     {
-        mRenderer.startRecording(getVideoFile());
-        mRecordBtn.setImageDrawable(stopRecordBtnIcon);
+        // todo alertDialog cancels full screen mode
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        final EditText edittext = new EditText(getApplicationContext());
+        alert.setTitle("Video name");
+        alert.setView(edittext);
+        alert.setCancelable(false);
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //What ever you want to do with the value
+                String videoName = edittext.getText().toString() + ".mp4";
+                storeFileName = videoName;
+                if (!videoName.equals("")){
+                    mRenderer.startRecording(new File(fileIO.getAppFolder(),videoName));
+                    mRecordBtn.setImageDrawable(stopRecordBtnIcon);
+                }else {
+                    Toast.makeText(getApplicationContext(),
+                            "Please enter a name!", Toast.LENGTH_SHORT).show();
+                }
+
+                ShaderUtils.goFullscreen(getWindow());
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // what ever you want to do with No option.
+                storeFileName = "";
+                ShaderUtils.goFullscreen(getWindow());
+            }
+        });
+
+        alert.show();
+
     }
 
     private void stopRecording()
@@ -266,7 +294,8 @@ public class CameraFilterActivity extends AppCompatActivity implements CameraRen
         //restart so surface is recreated
         shutdownCamera(true);
 
-        Toast.makeText(this, "File recording complete: " + getVideoFile().getAbsolutePath(), Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "File recording complete: " + fileIO.getAppFolder().toString() +
+                File.separator + this.storeFileName, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -337,9 +366,12 @@ public class CameraFilterActivity extends AppCompatActivity implements CameraRen
     @OnClick(R.id.btn_close)
     public void onClickCLose()
     {
-        if(mRenderer.isRecording())
-            stopRecording();
-        finish();
+        if(mRenderer.isRecording()){
+            Toast.makeText(getApplicationContext(),
+                    "Please stop the current recording first!", Toast.LENGTH_SHORT).show();
+        }else {
+            finish();
+        }
     }
 
     @OnClick(R.id.btn_record)
