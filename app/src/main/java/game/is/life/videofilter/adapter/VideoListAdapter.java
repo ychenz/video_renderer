@@ -3,6 +3,9 @@ package game.is.life.videofilter.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,8 +15,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import game.is.life.videofilter.FileIO;
 import game.is.life.videofilter.R;
 
 /**
@@ -85,10 +90,21 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
                 VideoListItem item = mDataset.get(position);
-                String fullPath = item.getFullPath();
-                Uri videoUri = Uri.parse(fullPath);
+                // todo Use file uri instead of String here
+                File sdCard = Environment.getExternalStorageDirectory();
+                File file = new File(sdCard, File.separator + FileIO.getAppFolderName()
+                        + File.separator + item.getTitle());
+                Uri videoUri;
+
+                //todo use File PROVIDER TO SHARE  FILE ACROSS APP above api level 23
+                if (Build.VERSION.SDK_INT > 23) {
+                    videoUri = FileProvider.getUriForFile(context,
+                        context.getApplicationContext().getPackageName() + ".provider", file);
+                }else
+                    videoUri = Uri.fromFile(file);
                 Intent intent = new Intent(Intent.ACTION_VIEW, videoUri);
-                intent.setDataAndType(videoUri, "video/mp4");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.setDataAndType(videoUri, "video/*");
                 context.startActivity(intent);
             }
         });

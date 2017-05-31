@@ -38,6 +38,10 @@ public class FileIO {
             return fileIO;
     }
 
+    public static String getAppFolderName(){
+        return APP_FOLDER;
+    }
+
     public File getAppFolder(){
         StringBuilder stringBuilder= new StringBuilder();
         stringBuilder.append(Environment.getExternalStorageDirectory());
@@ -56,6 +60,17 @@ public class FileIO {
         stringBuilder.append(videoCount.toString());
         stringBuilder.append("_");
         stringBuilder.append(VIDEO_FILE_NAME);
+        return new File(stringBuilder.toString());
+    }
+
+    public File getFile(String fileName){
+        videoCount += 1;
+        StringBuilder stringBuilder= new StringBuilder();
+        stringBuilder.append(Environment.getExternalStorageDirectory());
+        stringBuilder.append(File.separator);
+        stringBuilder.append(APP_FOLDER);
+        stringBuilder.append(File.separator);
+        stringBuilder.append(fileName);
         return new File(stringBuilder.toString());
     }
 }
