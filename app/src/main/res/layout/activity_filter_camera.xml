@@ -19,6 +19,7 @@
 
     <ImageButton
         android:id="@+id/btn_close"
+        android:foreground="?android:attr/selectableItemBackground"
         android:background="@null"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -28,6 +29,7 @@
 
     <ImageButton
         android:id="@+id/btn_swap_camera"
+        android:foreground="?android:attr/selectableItemBackground"
         android:layout_width="wrap_content"
         android:background="@null"
         android:layout_height="wrap_content"
@@ -35,15 +37,15 @@
         android:layout_alignParentEnd="true"
         android:layout_margin="20dp" />
 
-    <SeekBar
-        android:id="@+id/seek_bar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:layout_above="@id/btn_record"
-        android:progress="50"
-        android:max="100"
-        android:padding="10dp"/>
+    <!--<SeekBar-->
+        <!--android:id="@+id/seek_bar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="20dp"-->
+        <!--android:layout_above="@id/btn_record"-->
+        <!--android:progress="50"-->
+        <!--android:max="100"-->
+        <!--android:padding="10dp"/>-->
 
 
 </RelativeLayout>

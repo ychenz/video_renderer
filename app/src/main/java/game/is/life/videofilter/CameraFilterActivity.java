@@ -33,6 +33,7 @@ import butterknife.InjectView;
 import butterknife.OnClick;
 import game.is.life.videofilter.renderer.ExampleRenderer;
 
+// Current in use
 public class CameraFilterActivity extends AppCompatActivity implements CameraRenderer.OnRendererReadyListener, PermissionsHelper.PermissionsListener{
 
     private CameraFragment mCameraFragment;
