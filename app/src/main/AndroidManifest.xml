@@ -24,7 +24,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".CameraActivity" />
-        <activity android:name=".CameraFilterActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".CameraFilterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <!--To open video files using other apps through sharing uri-->
         <provider

@@ -34,4 +34,9 @@ public class SuperAwesomeRenderer extends CameraRenderer {
     public void setTileAmount(float tileAmount) {
         this.mTileAmount = tileAmount;
     }
+
+    @Override
+    public String toString() {
+        return "Kaleidoscope";
+    }
 }

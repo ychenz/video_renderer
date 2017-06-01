@@ -63,4 +63,9 @@ public class ExampleRenderer extends CameraRenderer
         offsetG = rawY / mSurfaceHeight;
         offsetB = offsetR / offsetG;
     }
+
+    @Override
+    public String toString() {
+        return "Color sensitive";
+    }
 }

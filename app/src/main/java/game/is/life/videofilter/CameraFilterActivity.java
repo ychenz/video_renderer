@@ -2,6 +2,7 @@ package game.is.life.videofilter;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.SurfaceTexture;
 import android.graphics.drawable.Drawable;
@@ -26,18 +27,23 @@ import com.androidexperiments.shadercam.utils.ShaderUtils;
 import net.steamcrafted.materialiconlib.MaterialDrawableBuilder;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import game.is.life.videofilter.renderer.BlackWhiteRenderer;
 import game.is.life.videofilter.renderer.ExampleRenderer;
+import game.is.life.videofilter.renderer.DystopiaRenderer;
+import game.is.life.videofilter.renderer.InvertedRenderer;
+import game.is.life.videofilter.renderer.SuperAwesomeRenderer;
 
 // Current in use
 public class CameraFilterActivity extends AppCompatActivity implements CameraRenderer.OnRendererReadyListener, PermissionsHelper.PermissionsListener{
 
     private CameraFragment mCameraFragment;
-    private CameraRenderer mRenderer;
+    private CameraRenderer mRenderer = null;
     private PermissionsHelper mPermissionsHelper;
     private boolean mPermissionsSatisfied = false;
     private static final String TAG = CameraFilterActivity.class.getSimpleName();
@@ -58,11 +64,15 @@ public class CameraFilterActivity extends AppCompatActivity implements CameraRen
     @InjectView(R.id.btn_record) FloatingActionButton mRecordBtn;
     @InjectView(R.id.btn_swap_camera) ImageButton mSwapCameraButton;
     @InjectView(R.id.btn_close) ImageButton mCloseButton;
+    @InjectView(R.id.btn_choose_filter) ImageButton mChooseFilterButton;
 
     private Drawable recordBtnIcon;
     private Drawable stopRecordBtnIcon;
     private Drawable swapCameraIcon;
     private Drawable closeIcon;
+    private Drawable menuIcon;
+    private ArrayList<CameraRenderer> renderers;
+    private int render_idx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +103,21 @@ public class CameraFilterActivity extends AppCompatActivity implements CameraRen
                 .setSizeDp(30)
                 .build();
 
+        menuIcon = MaterialDrawableBuilder.with(getApplicationContext()) // provide a context
+                .setIcon(MaterialDrawableBuilder.IconValue.MENU) // provide an icon
+                .setColor(Color.WHITE) // set the icon color
+                .setSizeDp(30)
+                .build();
+
         mRecordBtn.setImageDrawable(recordBtnIcon);
         mSwapCameraButton.setImageDrawable(swapCameraIcon);
         mCloseButton.setImageDrawable(closeIcon);
+        mChooseFilterButton.setImageDrawable(menuIcon);
+
+        renderers = new ArrayList<>();
+
+        Intent intent = getIntent();
+        render_idx = intent.getIntExtra("renderer", 0);
 
         setupCameraFragment();
         setupInteraction();
@@ -205,6 +227,7 @@ public class CameraFilterActivity extends AppCompatActivity implements CameraRen
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG, "onPause()");
 
         shutdownCamera(false);
         mTextureView.setSurfaceTextureListener(null);
@@ -228,7 +251,22 @@ public class CameraFilterActivity extends AppCompatActivity implements CameraRen
     }
 
     protected CameraRenderer getRenderer(SurfaceTexture surface, int width, int height) {
-        return new ExampleRenderer(this, surface, width, height);
+        /**
+         * ShaderToy reference
+         * iChannel0 = camTexture
+         * texture = texture2D
+         * fragColor = gl_FragColor
+         * fragCoord = v_CamTexCoordinate
+         *
+         */
+        renderers.add(new ExampleRenderer(this, surface, width, height));
+        renderers.add(new BlackWhiteRenderer(this, surface, width, height));
+        renderers.add(new DystopiaRenderer(this, surface, width, height));
+        renderers.add(new InvertedRenderer(this, surface, width, height));
+        renderers.add(new SuperAwesomeRenderer(this,surface, width, height));
+
+        Log.d(TAG + " render index", String.valueOf(render_idx));
+        return renderers.get(render_idx);
     }
 
     /**
@@ -362,6 +400,41 @@ public class CameraFilterActivity extends AppCompatActivity implements CameraRen
     public void onClickSwapCamera()
     {
         mCameraFragment.swapCamera();
+    }
+
+    @OnClick(R.id.btn_choose_filter)
+    public void onClickChooseFilter() {
+        if(mRenderer.isRecording()){
+            Toast.makeText(getApplicationContext(),
+                    "Please stop the current recording first!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        CharSequence names[] = new CharSequence[renderers.size()];
+        for (int i=0; i<renderers.size();i++){
+            names[i] = renderers.get(i).toString();
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Pick a filter");
+        builder.setItems(names, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // the user clicked on colors[which]mRenderer = new ExampleRenderer(this, surface, mCameraFragment, width, height);
+                Intent intent = getIntent();
+                intent.putExtra("renderer",which);
+                finish();
+                startActivity(intent);
+            }
+        });
+
+        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ShaderUtils.goFullscreen(getWindow());
+            }
+        });
+        builder.show();
     }
 
     @OnClick(R.id.btn_close)
