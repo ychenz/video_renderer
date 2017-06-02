@@ -27,25 +27,35 @@
         android:layout_alignParentTop="true"
         android:layout_margin = "30dp"/>
 
-    <ImageButton
-        android:id="@+id/btn_swap_camera"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:background="@null"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btn_record"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="30dp" />
 
-    <ImageButton
-        android:id="@+id/btn_choose_filter"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:background="@null"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd ="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin ="30dp" />
+
+    <RelativeLayout
+        android:id="@+id/view"
+        android:background="@color/trans_black"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_alignParentBottom="true">
+
+        <ImageButton
+            android:id="@+id/btn_swap_camera"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="30dp" />
+
+        <ImageButton
+            android:id="@+id/btn_choose_filter"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:background="@null"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin ="30dp" />
+    </RelativeLayout>
 
     <!--<SeekBar-->
         <!--android:id="@+id/seek_bar"-->

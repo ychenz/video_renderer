@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -47,6 +48,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         private TextView duration;
         private TextView format;
         private ItemClickListener clickListener;
+        private ImageButton shareBotton;
 
         private VideoViewHolder(CardView v) {
             super(v);
@@ -56,6 +58,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             title = (TextView)itemView.findViewById(R.id.video_title);
             duration = (TextView)itemView.findViewById(R.id.video_duration);
             format = (TextView)itemView.findViewById(R.id.video_format);
+            shareBotton = (ImageButton)itemView.findViewById(R.id.share_btn);
+            shareBotton.setOnClickListener(this);
         }
 
         private void setOnClickListener(ItemClickListener itemClickListener) {
@@ -81,7 +85,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     }
 
     @Override
-    public void onBindViewHolder(VideoViewHolder holder, int position) {
+    public void onBindViewHolder(VideoViewHolder holder,int position) {
         Log.d("RecyclerAdapter", "holder at position " + position);
         VideoListItem video = mDataset.get(position);
         holder.thumb.setImageBitmap(video.getThumb());
@@ -98,7 +102,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                         + File.separator + item.getTitle());
                 Uri videoUri;
 
-                //todo use File PROVIDER TO SHARE  FILE ACROSS APP above api level 23
                 if (Build.VERSION.SDK_INT > 23) {
                     videoUri = FileProvider.getUriForFile(context,
                         context.getApplicationContext().getPackageName() + ".provider", file);
@@ -107,6 +110,28 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 Intent intent = new Intent(context, PlayerActivity.class);
                 intent.putExtra("videoUri",videoUri.toString());
                 context.startActivity(intent);
+            }
+        });
+
+        final int adapterPosistion = holder.getAdapterPosition();
+        holder.shareBotton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                VideoListItem item = mDataset.get(adapterPosistion);
+                File sdCard = Environment.getExternalStorageDirectory();
+                File file = new File(sdCard, File.separator + FileIO.getAppFolderName()
+                        + File.separator + item.getTitle());
+                Uri videoUri;
+                if (Build.VERSION.SDK_INT > 23) {
+                    videoUri = FileProvider.getUriForFile(context,
+                            context.getApplicationContext().getPackageName() + ".provider", file);
+                }else
+                    videoUri = Uri.fromFile(file);
+                Intent shareIntent = new Intent();
+                shareIntent.setAction(Intent.ACTION_SEND);
+                shareIntent.putExtra(Intent.EXTRA_STREAM, videoUri);
+                shareIntent.setType("video/mp4");
+                context.startActivity(Intent.createChooser(shareIntent, "Share video to.."));
             }
         });
     }

@@ -54,12 +54,16 @@
                 android:text="mp4" />
 
             <ImageButton
-                android:id="@+id/imageButton"
+                android:id="@+id/share_btn"
+                android:foreground="?android:attr/selectableItemBackgroundBorderless"
                 android:background="@null"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
+                card_view:srcCompat="@android:drawable/ic_menu_share"
+                android:layout_margin="15dp"
+                android:layout_centerVertical="true"
                 android:layout_alignParentEnd="true" />
+
         </RelativeLayout>
 
     </LinearLayout>
