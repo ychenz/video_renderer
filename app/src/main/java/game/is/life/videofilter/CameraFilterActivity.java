@@ -93,7 +93,7 @@ public class CameraFilterActivity extends AppCompatActivity implements CameraRen
                 .setSizeDp(50) // set the icon size
                 .build();
         swapCameraIcon = MaterialDrawableBuilder.with(getApplicationContext()) // provide a context
-                .setIcon(MaterialDrawableBuilder.IconValue.CACHED) // provide an icon
+                .setIcon(MaterialDrawableBuilder.IconValue.CAMERA_SWITCH) // provide an icon
                 .setColor(Color.WHITE) // set the icon color
                 .setSizeDp(30)
                 .build();

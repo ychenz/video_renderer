@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import game.is.life.videofilter.FileIO;
+import game.is.life.videofilter.PlayerActivity;
 import game.is.life.videofilter.R;
 
 /**
@@ -103,9 +104,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                         context.getApplicationContext().getPackageName() + ".provider", file);
                 }else
                     videoUri = Uri.fromFile(file);
-                Intent intent = new Intent(Intent.ACTION_VIEW, videoUri);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.setDataAndType(videoUri, "video/*");
+                Intent intent = new Intent(context, PlayerActivity.class);
+                intent.putExtra("videoUri",videoUri.toString());
                 context.startActivity(intent);
             }
         });
